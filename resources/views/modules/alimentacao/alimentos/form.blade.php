@@ -1,0 +1,11 @@
+<x-layout :title="$alimento->exists ? 'Editar alimento' : 'Novo alimento'">
+    <x-page-heading :title="$alimento->exists ? 'Editar alimento' : 'Novo alimento'" eyebrow="ALIMENTAÇÃO"><a href="{{ route('alimentos.index') }}" class="btn-secondary">Voltar</a></x-page-heading>
+    @if($tipos->isEmpty())<div class="card"><p class="text-sm">Cadastre um tipo de alimento antes de cadastrar os alimentos.</p><a href="{{ route('tipos-alimento.create') }}" class="btn mt-4">Cadastrar tipo</a></div>@else
+    <form method="POST" action="{{ $alimento->exists ? route('alimentos.update', $alimento) : route('alimentos.store') }}" class="card space-y-5">@csrf @if($alimento->exists) @method('PUT') @endif
+        <div class="grid gap-5 sm:grid-cols-2"><x-field name="codigo" label="Código *" :value="$alimento->codigo" required maxlength="50"/><x-field name="nome" label="Nome *" :value="$alimento->nome" required maxlength="150"/>
+            <x-select name="tipo_alimento_id" label="Tipo de alimento *" required><option value="">Selecione</option>@foreach($tipos as $tipo)<option value="{{ $tipo->id }}" @selected((string) old('tipo_alimento_id', $alimento->tipo_alimento_id) === (string) $tipo->id)>{{ $tipo->nome }}{{ $tipo->ativo ? '' : ' (inativo)' }}</option>@endforeach</x-select>
+            <x-select name="unidade" label="Unidade de fornecimento *" required><option value="">Selecione</option>@foreach(\App\Modules\Alimentacao\Models\Alimento::UNIDADES as $unidade)<option value="{{ $unidade }}" @selected(old('unidade', $alimento->unidade) === $unidade)>{{ $unidade }}</option>@endforeach</x-select>
+            <x-select name="ativo" label="Situação *" required><option value="1" @selected((string) old('ativo', (int) $alimento->ativo) === '1')>Ativo</option><option value="0" @selected((string) old('ativo', (int) $alimento->ativo) === '0')>Inativo</option></x-select>
+        </div><x-textarea name="composicao" label="Composição" :value="$alimento->composicao" maxlength="5000"/><x-textarea name="descricao" label="Descrição" :value="$alimento->descricao" maxlength="5000"/><p class="text-xs text-stone-500">Após o primeiro fornecimento, a unidade é preservada. Para usar outra unidade, cadastre outro alimento.</p><button class="btn" type="submit">Salvar alimento</button>
+    </form>@endif
+</x-layout>

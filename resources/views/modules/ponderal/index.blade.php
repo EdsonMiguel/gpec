@@ -1,0 +1,11 @@
+<x-layout title="Pesagens">
+    <x-page-heading title="Registrar pesagem" eyebrow="CONTROLE PONDERAL"><a href="{{ route('motivos-pesagem.index') }}" class="btn-secondary">Motivos de pesagem</a></x-page-heading>
+    @if($motivos->isEmpty())<div class="card"><p class="text-sm text-stone-600">Nenhum motivo de pesagem ativo. Solicite o cadastro ou a ativação de um motivo ao administrador.</p></div>@else
+    <form method="POST" action="{{ route('pesagens.store') }}" class="card space-y-5">@csrf
+        <div class="grid gap-5 sm:grid-cols-2"><x-animal-field :selected="$selected"/><x-field name="peso" type="number" label="Peso (kg)" required min="0.01" max="99999.99" step="0.01" inputmode="decimal" placeholder="0,00"/><x-field name="data_pesagem" type="datetime-local" label="Data e hora" :value="now()->format('Y-m-d\TH:i')" :max="now()->format('Y-m-d\TH:i')" required/><x-field name="observacao" label="Observação" maxlength="2000"/></div>
+        <x-select name="motivo_pesagem_id" label="Motivo da pesagem *" required><option value="">Selecione o motivo</option>@foreach($motivos as $motivo)<option value="{{ $motivo->id }}" @selected((string) old('motivo_pesagem_id') === (string) $motivo->id)>{{ $motivo->nome }}</option>@endforeach</x-select>
+        <button class="btn w-full sm:w-auto" type="submit">Salvar pesagem</button>
+    </form>
+    @endif
+    <section class="card"><h2 class="section-title mb-3">Pesagens registradas</h2>@forelse($pesagens as $pesagem)<a class="flex min-h-17 items-center justify-between gap-3 border-b border-stone-100 py-3" href="{{ route('animais.show', $pesagem->animal_id) }}"><div class="min-w-0"><p class="text-sm font-semibold">Brinco {{ $pesagem->animal->brinco }} @if($pesagem->animal->trashed())<span class="badge">Arquivado</span>@endif</p><p class="text-xs text-stone-500">{{ $pesagem->data_pesagem->format('d/m/Y · H:i') }}</p><p class="mt-1 break-words text-xs text-emerald-800">{{ $pesagem->motivo->nome }}</p></div><strong class="shrink-0">{{ number_format((float) $pesagem->peso, 2, ',', '.') }} <span class="text-xs font-normal">kg</span></strong></a>@empty<p class="empty">Nenhuma pesagem registrada. Informe o brinco acima para começar.</p>@endforelse<div class="mt-4">{{ $pesagens->links() }}</div></section>
+</x-layout>

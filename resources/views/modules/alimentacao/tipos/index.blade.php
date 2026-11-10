@@ -1,0 +1,6 @@
+<x-layout title="Tipos de alimento">
+    <x-page-heading title="Tipos de alimento" eyebrow="ALIMENTAÇÃO">@can('administrar')<a href="{{ route('tipos-alimento.create') }}" class="btn">+ Novo tipo</a>@endcan</x-page-heading>
+    <x-alimentacao-nav/>
+    <div class="grid gap-4 sm:grid-cols-2">@forelse($tipos as $tipo)<article class="card min-w-0 space-y-3"><div class="flex items-start justify-between gap-3"><h2 class="min-w-0 break-words font-bold">{{ $tipo->nome }}</h2><span class="badge shrink-0">{{ $tipo->ativo ? 'Ativo' : 'Inativo' }}</span></div><p class="break-words text-xs text-stone-500">{{ $tipo->codigo }}</p><p class="whitespace-pre-line break-words text-sm">{{ $tipo->descricao }}</p><p class="text-sm text-emerald-800">{{ $tipo->alimentos_count }} alimentos vinculados</p>@can('administrar')<a href="{{ route('tipos-alimento.edit', $tipo) }}" class="btn-secondary">Editar tipo</a>@if($tipo->alimentos_count === 0)<details><summary class="min-h-11 cursor-pointer text-sm text-stone-500">Excluir tipo sem uso</summary><form method="POST" action="{{ route('tipos-alimento.destroy', $tipo) }}">@csrf @method('DELETE')<button class="btn-secondary text-red-800" type="submit">Confirmar exclusão</button></form></details>@endif @endcan</article>@empty<p class="empty">Nenhum tipo de alimento cadastrado.</p>@endforelse</div>
+    {{ $tipos->links() }}
+</x-layout>

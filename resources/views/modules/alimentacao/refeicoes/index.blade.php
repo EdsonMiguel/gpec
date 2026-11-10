@@ -1,0 +1,5 @@
+<x-layout title="Refeições">
+    <x-page-heading title="Refeições" eyebrow="ALIMENTAÇÃO"><a href="{{ route('refeicoes.create') }}" class="btn">+ Registrar refeição</a></x-page-heading><x-alimentacao-nav/>
+    <section class="space-y-3">@forelse($refeicoes as $refeicao)<a href="{{ route('refeicoes.show', $refeicao) }}" class="card block space-y-3 hover:border-emerald-500"><div class="flex flex-wrap items-center justify-between gap-2"><h2 class="font-semibold">Brinco {{ $refeicao->animal->brinco }} @if($refeicao->animal->trashed())<span class="badge">Arquivado</span>@endif</h2><span class="badge">{{ \App\Modules\Alimentacao\Models\Refeicao::TURNOS[$refeicao->turno] }}</span></div><p class="text-xs text-stone-500">{{ $refeicao->data_fornecimento->format('d/m/Y · H:i') }}</p><div class="space-y-1">@foreach($refeicao->itens as $item)<p class="break-words text-sm">{{ $item->alimento->nome }} · <strong>{{ number_format((float) $item->quantidade, 3, ',', '.') }} {{ $item->unidade }}</strong></p>@endforeach</div></a>@empty<div class="card"><p class="empty">Nenhuma refeição registrada.</p></div>@endforelse</section>
+    {{ $refeicoes->links() }}
+</x-layout>
